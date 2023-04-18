@@ -57,6 +57,7 @@ export default function Home() {
         }
         if (response.status === 200) {
           setMessage("Successful login!");
+          console.log("Successful login!");
           // Assuming the login is successful, redirect to the items page
           // navigate("/items");
         }
