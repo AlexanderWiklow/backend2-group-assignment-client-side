@@ -1,12 +1,11 @@
-// import Image from "next/image";
 import React, { useState } from "react";
 import { Inter } from "next/font/google";
-// import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/router"; // import useRouter from next/router
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  // const navigate = useNavigate();
+  const router = useRouter(); // use useRouter from next/router instead of useNavigate
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -59,7 +58,7 @@ export default function Home() {
           setMessage("Successful login!");
           console.log("Successful login!");
           // Assuming the login is successful, redirect to the items page
-          // navigate("/items");
+          router.push("/test");
         }
       } catch (Error) {
         setMessage("Something went wrong!");
