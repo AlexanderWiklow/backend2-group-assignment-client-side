@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from "react";
 
 import { useRouter } from "next/router";
 
+import Comment from "@/components/comment";
+
 export default function Post({ author, post }) {
 	const router = useRouter();
 
@@ -126,9 +128,16 @@ export default function Post({ author, post }) {
 					</div>
 				</form>
 			</div>
-			<button onClick={handleToggleLike} disabled={isLikePending}>
-				<span style={{ filter: hasLiked ? "grayscale(0%)" : "grayscale(100%)" }}>👍</span> {likes} {likes === 1 ? "like" : "likes"}
-			</button>
+			<div>
+				<button onClick={handleToggleLike} disabled={isLikePending}>
+					<span style={{ filter: hasLiked ? "grayscale(0%)" : "grayscale(100%)" }}>👍</span> {likes} {likes === 1 ? "like" : "likes"}
+				</button>
+				<details>
+					<summary>Comments</summary>
+					{post?.comments?.map((comment, i) => <Comment key={i} comment={comment} />) || null}
+					<Comment />
+				</details>
+			</div>
 		</div>
 	);
 }
