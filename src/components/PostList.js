@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import styles from "./PostList.module.css";
 import Image from "next/image";
+import Post from "./post";
 
 export default function PostList() {
   const [users, setUsers] = useState([]);
@@ -83,6 +84,7 @@ export default function PostList() {
               </div>
             ) : null
           )}
+          <Post />
         </ul>
       </div>
     </>
