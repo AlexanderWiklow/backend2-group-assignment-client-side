@@ -51,8 +51,7 @@ export default function Feed() {
 						<p>No posts yet</p>
 						<p>It could be that you do not follow anyone.</p>
 						<p>Or the people you follow are just very boring and do not post anything!</p>
-						{/* TODO: point href to homepage */}
-						<a className="text-blue-400" href="/Home">
+						<a className="text-blue-400" href="/home">
 							Go to Homepage
 						</a>
 					</div>
