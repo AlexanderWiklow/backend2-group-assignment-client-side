@@ -58,7 +58,7 @@ export default function Home() {
           setMessage("Successful login!");
           console.log("Successful login!");
           // Assuming the login is successful, redirect to the items page
-          router.push("/test");
+          router.push("/home");
         }
       } catch (Error) {
         setMessage("Something went wrong!");
