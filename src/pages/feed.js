@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
+import AppLayout from "@/components/AppLayout";
+import Nav from "@/components/Nav";
 import Post from "@/components/post";
+import PostCreate from "@/components/PostCreate";
 
 export default function Feed() {
+	return <AppLayout Nav={Nav} Main={Main} Sidebar={() => <></>} title={"Feed"} />;
+}
+
+function Main() {
 	const router = useRouter();
 
 	const [postsSortedByDate, setPostsSortedByDate] = useState(null);
@@ -39,11 +46,12 @@ export default function Feed() {
 	}
 
 	return (
-		<div className="flex flex-col items-center h-screen">
-			<main className="flex-grow w-full max-w-lg">
-				<h1 className="mt-8 text-4xl text-center">Feed</h1>
-				<h6 className="mb-6 text-sm text-center opacity-70">(Posts from people you follow)</h6>
-				<div className="border-b-2" />
+		<>
+			<div className="p-2">
+				<PostCreate />
+			</div>
+			<div className="border-b-[1px]" />
+			<div className="flex flex-col flex-grow h-0 overflow-auto">
 				{!postsSortedByDate && isLoading ? <p className="mx-auto my-4 text-4xl w-min animate-spin">🌞</p> : null}
 				{postsSortedByDate ? postsSortedByDate.map((post, i) => <Post author={post.author} post={post} key={i} />) : null}
 				{!isLoading && !postsSortedByDate?.length ? (
@@ -56,7 +64,7 @@ export default function Feed() {
 						</a>
 					</div>
 				) : null}
-			</main>
-		</div>
+			</div>
+		</>
 	);
 }
