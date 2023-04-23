@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Nav() {
   const routes = [
     {
@@ -7,6 +9,10 @@ export default function Nav() {
     {
       name: "Feed",
       path: "/feed"
+    },
+    {
+      name: "My Profile",
+      path: "/profile"
     },
     {
       name: "Sign in/up",
@@ -19,9 +25,9 @@ export default function Nav() {
       <ul className="flex flex-col gap-4 text-2xl select-none">
         {routes.map((route, i) => (
           <li className="flex" key={i}>
-            <a href={route.path} className="flex-grow transition-all hover:opacity-70 hover:underline hover:pl-1">
+            <Link href={route.path} className="flex-grow transition-all hover:opacity-70 hover:underline hover:pl-1">
               {route.name}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
