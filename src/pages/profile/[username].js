@@ -34,7 +34,7 @@ function Main() {
 
 	return (
 		<>
-			<h1 className="m-2 text-3xl">{isLoading ? "..." : data?.username}</h1>
+			<h1 className="m-2 text-2xl">{isLoading ? "..." : data?.username}</h1>
 			<div className="flex justify-end m-2" style={{ display: data?.clientIsProfileOwner ? "none" : "flex" }}>
 				<FollowButton clientIsFollowing={data?.clientIsFollowing || false} profileId={data?.id} />
 			</div>
