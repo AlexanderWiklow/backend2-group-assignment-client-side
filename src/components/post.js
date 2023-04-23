@@ -61,13 +61,41 @@ export default function Post({ author, post }) {
 	//deleting
 	//
 	const [isDeletePending, setIsDeletePending] = useState(false);
+	const [isDeleted, setIsDeleted] = useState(false);
+	const [deleteError, setDeleteError] = useState("");
 
 	function handleDeletePost() {
 		deletePost();
 	}
 	async function deletePost() {
 		setIsDeletePending(true);
-		//TODO: Fetch to delete the current post
+		try {
+			const res = await fetch(`http://localhost:5050/post?postID=${post._id}`, {
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({ targetPost: post?._id }),
+				credentials: "include"
+			});
+			switch (res.status) {
+				case 401:
+					return router.push("/");
+				case 400:
+					throw { err: "Invalid post" };
+				case 500:
+					throw { message: "Internal Server Error" };
+				default:
+					break;
+			}
+		} catch (error) {
+			error.err ??= "Error deleting post";
+			setDeleteError(error.err);
+			setIsDeletePending(false);
+			return;
+		}
+		setDeleteError("");
+		setIsDeleted(true);
 		setIsDeletePending(false);
 	}
 
@@ -83,7 +111,7 @@ export default function Post({ author, post }) {
 	};
 
 	return (
-		<div className="px-2 border-b-2">
+		<div className="px-2 border-b-2" style={{ display: isDeleted ? "none" : "block" }}>
 			<div className="grid grid-cols-2">
 				<div className="flex items-center">
 					<a href={`/profile/${author}` === router.asPath ? null : `/profile/${author}`} className="text-blue-500 underline">
@@ -107,9 +135,12 @@ export default function Post({ author, post }) {
 				</EditingContext.Provider>
 			</div>
 			<div>
-				<button onClick={handleToggleLike} disabled={isLikePending}>
-					<span style={{ filter: hasLiked ? "grayscale(0%)" : "grayscale(100%)" }}>👍</span> {likes} {likes === 1 ? "like" : "likes"}
-				</button>
+				<div className="flex items-center justify-between">
+					<button onClick={handleToggleLike} disabled={isLikePending}>
+						<span style={{ filter: hasLiked ? "grayscale(0%)" : "grayscale(100%)" }}>👍</span> {likes} {likes === 1 ? "like" : "likes"}
+					</button>
+					<p className="text-sm">{deleteError}</p>
+				</div>
 				<details>
 					<summary>comments</summary>
 					<div className="w-full">
