@@ -1,9 +1,11 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, createContext, useContext } from "react";
 
 import { useRouter } from "next/router";
 
 import Comment from "@/components/comment";
 import AddComment from "@/components/AddComment";
+
+const EditingContext = createContext(null);
 
 export default function Post({ author, post }) {
 	const router = useRouter();
@@ -50,35 +52,10 @@ export default function Post({ author, post }) {
 	//
 	//Editing
 	//
-	const editorInput = useRef();
+	const [currentContent, setCurrentContent] = useState(post?.content || "");
 	const [editingMode, setEditingMode] = useState(false);
-	const [editedContent, setEditedContent] = useState(post?.content || "");
+	const [editedContent, setEditedContent] = useState(currentContent);
 	const [isEditPending, setIsEditPending] = useState(false);
-
-	function handleEditPost(e) {
-		e.preventDefault();
-		editPost();
-	}
-	async function editPost() {
-		setIsEditPending(true);
-		//TODO: Fetch to update posts content
-		//const res = await fetch(...)
-		setIsEditPending(false);
-	}
-
-	function handleEditCancel() {
-		setEditedContent(post?.content || "");
-		setEditingMode(false);
-	}
-
-	//select the posts editor input when editing mode is active
-	useEffect(() => {
-		if (editingMode) {
-			editorInput.current.focus();
-			return;
-		}
-		editorInput.current.blur();
-	}, [editingMode]);
 
 	//
 	//deleting
@@ -124,16 +101,10 @@ export default function Post({ author, post }) {
 				</div>
 			</div>
 			<div>
-				<p style={{ display: editingMode ? "none" : "unset" }}>{post?.content || ""}</p>
-				<form onSubmit={handleEditPost} style={{ display: editingMode ? "unset" : "none" }} className="flex flex-col">
-					<textarea ref={editorInput} className="w-full" onInput={(e) => setEditedContent(e.target.value)} value={editedContent} />
-					<div className="flex justify-end gap-2">
-						<button type="submit">Save</button>
-						<button onClick={(_) => handleEditCancel()} type="button">
-							Cancel
-						</button>
-					</div>
-				</form>
+				<EditingContext.Provider value={{ editingMode, setEditingMode, editedContent, setEditedContent, isEditPending, setIsEditPending, currentContent, setCurrentContent, postId: post._id }}>
+					<p style={{ display: editingMode ? "none" : "unset" }}>{currentContent}</p>
+					<PostEditor />
+				</EditingContext.Provider>
 			</div>
 			<div>
 				<button onClick={handleToggleLike} disabled={isLikePending}>
@@ -148,5 +119,87 @@ export default function Post({ author, post }) {
 				</details>
 			</div>
 		</div>
+	);
+}
+
+function PostEditor() {
+	const router = useRouter();
+
+	const { editingMode, setEditingMode, isEditPending, setIsEditPending, editedContent, setEditedContent, currentContent, setCurrentContent, postId } = useContext(EditingContext);
+	const editorInput = useRef();
+	const [editError, setEditError] = useState("");
+
+	function handleEditPost(e) {
+		e.preventDefault();
+		editPost();
+	}
+	async function editPost() {
+		setIsEditPending(true);
+		try {
+			if (editedContent === currentContent) throw { err: "The posts content was the same." };
+			const res = await fetch(`http://localhost:5050/post/${postId}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({ content: editedContent }),
+				credentials: "include"
+			});
+			switch (res.status) {
+				case 400:
+					throw { err: "The post must contain at least 1 character!" };
+				case 401:
+					return router.push("/");
+				case 404:
+					throw { err: "Post not found." };
+				default:
+					break;
+			}
+		} catch (error) {
+			console.error("Error updating post: ", error);
+			error.err ??= "Something went wrong, please try again later...";
+			setEditError(error.err);
+			setIsEditPending(false);
+			return;
+		}
+		setEditError("");
+		setCurrentContent(editedContent);
+		setEditingMode(false);
+		setIsEditPending(false);
+	}
+
+	function handleEditCancel() {
+		setEditError("");
+		setEditedContent(currentContent);
+		setEditingMode(false);
+	}
+
+	//select the posts editor input when editing mode is active
+	useEffect(() => {
+		if (editingMode) {
+			editorInput.current.focus();
+			return;
+		}
+		editorInput.current.blur();
+	}, [editingMode]);
+
+	return (
+		<>
+			<form onSubmit={handleEditPost} style={{ display: editingMode ? "unset" : "none" }} className="relative flex flex-col">
+				<div className="absolute flex items-center justify-center w-full h-full pointer-events-none">{isEditPending ? <span className="text-2xl animate-spin">🌞</span> : null}</div>
+				<textarea ref={editorInput} className="w-full" onInput={(e) => setEditedContent(e.target.value)} value={editedContent} disabled={isEditPending} />
+				<div className="flex items-center">
+					<p className="text-sm">
+						{editError ? "⚠" : null} {editError}
+					</p>
+					<div className="flex justify-end flex-grow gap-2">
+						<button type="submit">Save</button>
+						<button onClick={(_) => handleEditCancel()} type="button">
+							Cancel
+						</button>
+					</div>
+				</div>
+			</form>
+		</>
 	);
 }
