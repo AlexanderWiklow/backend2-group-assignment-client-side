@@ -7,7 +7,6 @@ import Link from "next/link";
 export default function PostList() {
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
-  //   const [usersName, setUsersName] = useState("");
 
   const apiUrl = "http://localhost:5050";
 
@@ -76,7 +75,7 @@ export default function PostList() {
                     height={20}
                   />
                   <h1>
-                    <p>{user.username}</p>
+                    <p className={styles.username}>{user.username}</p>
                   </h1>
                   <Link
                     className={styles.profileButton}
@@ -91,7 +90,6 @@ export default function PostList() {
                     <h2> {user.posts[0].content}</h2>
                   </li>
                 </ul>
-                {/* <Post author={user.username} post={user.posts[0]} /> */}
               </div>
             ) : null
           )}
