@@ -1,7 +1,7 @@
 export default function AppLayout({ Nav, Main, Sidebar, title }) {
 	return (
 		<div className="flex justify-center">
-			<div className="grid grid-cols-[minmax(auto,_16rem)_32rem_minmax(auto,_16rem)]">
+			<div className="grid grid-cols-[minmax(auto,_16rem)_32rem_minmax(auto,_20rem)]">
 				<header>
 					<Nav />
 				</header>
