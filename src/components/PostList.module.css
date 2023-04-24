@@ -25,6 +25,20 @@
     justify-content: space-between;
 }
 
+.header img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.header h1 {
+    margin: 0.5rem;
+}
+
+.username {
+    font-weight: bold;
+}
+
 .profileButton {
     background-color: rgba(7, 114, 227, 0.437);
     color: white;
