@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Inter } from "next/font/google";
 import { useRouter } from "next/router"; // import useRouter from next/router
+import Image from "next/image";
+import styles from "./Index.module.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -110,8 +112,14 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <Image
+        src="/../public/images/twitter-bird.jpeg"
+        alt="My Image"
+        width={300}
+        height={300}
+      />
       {isLogin ? <h2>Login</h2> : <h2>Register</h2>}
-      <form onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <label htmlFor="username">Username:</label>
         <input
           type="text"
