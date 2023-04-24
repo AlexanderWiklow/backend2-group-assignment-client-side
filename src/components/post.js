@@ -83,6 +83,8 @@ export default function Post({ author, post }) {
 					return router.push("/");
 				case 400:
 					throw { err: "Invalid post" };
+				case 404:
+					throw { err: "Post not found" };
 				case 500:
 					throw { message: "Internal Server Error" };
 				default:
