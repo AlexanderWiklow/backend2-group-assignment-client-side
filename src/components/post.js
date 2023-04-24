@@ -2,6 +2,9 @@ import { useEffect, useState, useRef } from "react";
 
 import { useRouter } from "next/router";
 
+import Comment from "@/components/comment";
+import AddComment from "@/components/AddComment";
+
 export default function Post({ author, post }) {
 	const router = useRouter();
 
@@ -94,7 +97,13 @@ export default function Post({ author, post }) {
 	//
 	//commenting
 	//
-	//TODO:
+
+	const [comments, setComments] = useState(post?.comments || []);
+
+	const updateCommentsList = (newComment) => {
+		console.log("new comment", newComment);
+		setComments([...comments, newComment]);
+	};
 
 	return (
 		<div className="px-2 border-b-2">
@@ -106,7 +115,7 @@ export default function Post({ author, post }) {
 					<span className="ml-2 text-xs opacity-70">{new Date(post?.createdAt).toUTCString()}</span>
 				</div>
 				<div className="justify-end gap-2" style={{ display: post?.clientIsAuthor ? "flex" : "none" }}>
-					<button onClick={() => setEditingMode(true)} style={{ display: editingMode ? "none" : "unset" }} className="grayscale">
+					<button onClick={() => setEditingMode(true)} style={{ display: editingMode ? "none" : "unset" }} className="grayscale" disabled={isEditPending}>
 						✏
 					</button>
 					<button onClick={handleDeletePost} className="grayscale" disabled={isDeletePending}>
@@ -126,9 +135,18 @@ export default function Post({ author, post }) {
 					</div>
 				</form>
 			</div>
-			<button onClick={handleToggleLike} disabled={isLikePending}>
-				<span style={{ filter: hasLiked ? "grayscale(0%)" : "grayscale(100%)" }}>👍</span> {likes} {likes === 1 ? "like" : "likes"}
-			</button>
+			<div>
+				<button onClick={handleToggleLike} disabled={isLikePending}>
+					<span style={{ filter: hasLiked ? "grayscale(0%)" : "grayscale(100%)" }}>👍</span> {likes} {likes === 1 ? "like" : "likes"}
+				</button>
+				<details>
+					<summary>comments</summary>
+					<div className="w-full">
+						<AddComment postId={post?._id} onCommentAdded={updateCommentsList} />
+						{comments?.map((commentObj, i) => <Comment key={i} sender={commentObj.sender} comment={commentObj.comment} />) || null}
+					</div>
+				</details>
+			</div>
 		</div>
 	);
 }
