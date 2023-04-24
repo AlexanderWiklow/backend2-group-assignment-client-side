@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styles from "./PostList.module.css";
 import Image from "next/image";
 import Post from "./post";
+import Link from "next/link";
 
 export default function PostList() {
   const [users, setUsers] = useState([]);
@@ -63,6 +64,7 @@ export default function PostList() {
       <div>
         {message ? <p>{message}</p> : null}
         <ul className={styles.listWrapper}>
+          <p>Users to follow</p>
           {users.map((user) =>
             user.posts && user.posts.length > 0 ? (
               <div key={user._id} className={styles.listCard}>
@@ -73,7 +75,15 @@ export default function PostList() {
                     width={20}
                     height={20}
                   />
-                  <h1>{user.username}</h1>
+                  <h1>
+                    <p>{user.username}</p>
+                  </h1>
+                  <Link
+                    className={styles.profileButton}
+                    href={`/profile/${user.username}`}
+                  >
+                    <button>View profile</button>
+                  </Link>
                 </div>
 
                 <ul className={styles.post}>
@@ -81,10 +91,10 @@ export default function PostList() {
                     <h2> {user.posts[0].content}</h2>
                   </li>
                 </ul>
+                {/* <Post author={user.username} post={user.posts[0]} /> */}
               </div>
             ) : null
           )}
-          <Post />
         </ul>
       </div>
     </>
