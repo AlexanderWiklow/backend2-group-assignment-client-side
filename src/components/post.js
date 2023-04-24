@@ -97,7 +97,6 @@ export default function Post({ author, post }) {
 	//
 	//commenting
 	//
-	//TODO:
 
 	const [comments, setComments] = useState(post?.comments || []);
 
